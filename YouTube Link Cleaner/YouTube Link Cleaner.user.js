@@ -43,12 +43,28 @@ if(window.location.pathname == "/redirect") {
   window.location.replace(window.decodeURIComponent(RegExp.$2));
 }
 /* If a unneeded parameter exists, remove it */
+var replaceurl = '';
+
 if(window.location.href.match(/(&(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*|\?(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*$)/)) {
-  window.history.replaceState({}, window.document.title, window.location.href.replace(/(&(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*|\?(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*$)/g, ''));
+  replaceurl = window.location.href.replace(/(&(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*|\?(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*$)/g, '');
 }
+
+if (replaceurl !== '') {
+  window.history.replaceState({}, window.document.title, replaceurl);
+}
+var playlist = window.location.href.match(/(\/playlist(&|\?)list)=([a-zA-Z0-9_\-\.]*)/)[3];
+var listregex = new RegExp("(&|\\?)(list="+playlist+")(&|$)","");
+
 for (var i = 0; i < window.document.links.length; i++) {
   /* Remove unneeded parameters */
   window.document.links[i].href = window.document.links[i].href.replace(/(&(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*|\?(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-9_\-\.]*$)/g, '');
+
+  /* Drop list parameter in playlists */
+  // is link in current playlist?
+  if(playlist !== '' && window.document.links[i].href.match(listregex)) {
+    window.document.links[i].href = window.document.links[i].href.replace(/(&(list|index)=[a-zA-Z0-9_\-\.]*|\?(list|index)=[a-zA-Z0-9_\-\.]*$)/g, '');
+  }
+
   /* Do not use redirect pages */
   window.document.links[i].className = window.document.links[i].className.replace(/(yt-uix-redirect-link)/g, "");
 }
