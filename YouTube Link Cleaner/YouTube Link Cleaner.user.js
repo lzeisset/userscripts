@@ -52,6 +52,14 @@ if(window.location.href.match(/(&(feature|src_vid|annotation_id|gl|hl)=[a-zA-Z0-
 if (replaceurl !== '') {
   window.history.replaceState({}, window.document.title, replaceurl);
 }
+
+if(window.location.pathname == "/playlist") {
+    var x = window.location.href.match(/(&(disable_polymer=true))/);
+    if (x == null) {
+        window.location.href += '&disable_polymer=true';
+    }
+}
+
 var playlist = window.location.href.match(/(\/playlist(&|\?)list)=([a-zA-Z0-9_\-\.]*)/)[3];
 var listregex = new RegExp("(&|\\?)(list="+playlist+")(&|$)","");
 
